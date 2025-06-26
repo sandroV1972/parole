@@ -1,0 +1,8 @@
+aa ab aba aaa bba cca zzz apple banana cherry date elder fig grape kiwi lemon
+ABCD aBCd AbaC XyZ Test Word AbBa CoCa
+capra arpa pesce sedia cavolo cavallo pippo pluto topolino paperino
+HeLLo worLD TeSt AbCdEf GHij klMN OPQr StUv
+mango nectarine orange papaya quince raspberry strawberry tangerine ugli voavanga watermelon xigua yangmei zucchini
+Foo BAR Baz Qux Quux Corge Grault Garply Waldo Fred
+QWeR RaaR TtUu VvWw XxYy ZzAa BbCc DdEe FfGg
+test lower only uppercase SCHEMA MixedCaSe sCeMa Example EXAMple eXaMpLe
