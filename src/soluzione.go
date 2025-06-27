@@ -7,11 +7,15 @@ import (
 	"strings"
 )
 
-var d dizionario
+var d *dizionario
+var g grafo
+
+var letters = "abcdefghijklmnopqrstuvwxyz"
 
 func main() {
 
 	d = newDizionario()
+	g = newGrafo()
 
 	for {
 		var comando string
@@ -20,40 +24,40 @@ func main() {
 			fmt.Fprintln(os.Stderr, "Errore nella lettura del comando:", err)
 			break
 		}
-		esegui(d, comando)
+		esegui(comando)
 	}
 }
 
-func esegui(d dizionario, comando string) {
+func esegui(comando string) {
 	token := split(comando)
 
 	if len(token) == 0 {
 		os.Exit(-1)
 	}
 	// TODO
-	switch comando {
+	switch token[0] {
 	case "c":
 		if len(token) == 1 {
 			d = newDizionario()
 		} else if len(token) == 2 {
-			carica(d, token[1])
+			carica(token[1])
 		} else if len(token) > 2 {
-			catena(d, token[1], token[2])
+			catena(token[1], token[2])
 		}
 	case "p":
-		stampa_parole(d)
+		stampa_parole()
 	case "s":
-		stampa_schemi(d)
+		stampa_schemi()
 	case "i":
-		inserisci(d, token[1])
+		d.inserisci(token[1])
 	case "e":
-		elimina(d, token[1])
+		elimina(token[1])
 	case "r":
-		ricerca(d, token[1])
+		ricerca(token[1])
 	case "d":
-		distanza(d, token[1], token[2])
+		distanza(token[1], token[2])
 	case "g":
-		gruppi(d)
+		gruppo(token[1])
 	case "t":
 		os.Exit(0)
 	}
@@ -63,7 +67,7 @@ func split(comando string) []string {
 	return strings.Fields(comando)
 }
 
-func carica(d dizionario, filename string) {
+func carica(filename string) {
 	// legge le parole in un file di input e le carica nel dizionario come parole o schemi
 	file, err := os.Open(filename)
 	if err != nil {
@@ -76,7 +80,7 @@ func carica(d dizionario, filename string) {
 
 	for scanner.Scan() {
 		w := scanner.Text()
-		inserisci(d, w)
+		d.inserisci(w)
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -84,18 +88,80 @@ func carica(d dizionario, filename string) {
 	}
 }
 
-func inserisci(d dizionario, w string) {
+func (d dizionario) inserisci(w string) {
 	if len(w) == 0 {
 		return
 	}
 	if w == strings.ToLower(w) {
+		if _, ok := d.Parole[w]; ok {
+			return // La parola è già presente nel dizionario
+		}
 		d.Parole[w] = struct{}{}
+		// inserisci la parola nel albero di ricerca e tutte le parole del dizioonario con
+		// distanza 1
+		aggiornaGrafo(w)
+
 	} else {
 		d.Schemi[w] = struct{}{}
 	}
 }
 
-func stampa_parole(d dizionario) {
+func aggiornaGrafo(w string) {
+	if _, ok := d.GrafoCatena[w]; !ok {
+		g[w] = []string{}
+	}
+	for _, k := range d.generaDistanza1(w) {
+		g[w] = append(g[w], k)
+		g[k] = append(g[k], w)
+	}
+}
+
+// generaDistanza1 restituisce tutte le parole già presenti in d.Parole
+// che sono a distanza esattamente 1 da w
+func (d *dizionario) generaDistanza1(w string) []string {
+	var res []string
+
+	// substitution
+	for i := 0; i < len(w); i++ {
+		orig := w[i]
+		for j := range letters {
+			ch := letters[j]
+			if byte(ch) == orig {
+				continue
+			}
+			cand := w[:i] + string(ch) + w[i+1:]
+			if _, ok := d.Parole[cand]; ok {
+				res = append(res, cand)
+			}
+		}
+	}
+	// insertion
+	for i := 0; i <= len(w); i++ {
+		for j := range letters {
+			cand := w[:i] + string(letters[j]) + w[i:]
+			if _, ok := d.Parole[cand]; ok {
+				res = append(res, cand)
+			}
+		}
+	}
+	// deletion
+	for i := 0; i < len(w); i++ {
+		cand := w[:i] + w[i+1:]
+		if _, ok := d.Parole[cand]; ok {
+			res = append(res, cand)
+		}
+	}
+	// transposition
+	for i := 0; i < len(w)-1; i++ {
+		cand := w[:i] + string(w[i+1]) + string(w[i]) + w[i+2:]
+		if _, ok := d.Parole[cand]; ok {
+			res = append(res, cand)
+		}
+	}
+	return res
+}
+
+func stampa_parole() {
 	fmt.Print("[")
 	for w := range d.Parole {
 		fmt.Println(w)
@@ -103,7 +169,7 @@ func stampa_parole(d dizionario) {
 	fmt.Print("]\n")
 }
 
-func stampa_schemi(d dizionario) {
+func stampa_schemi() {
 	fmt.Println("[")
 	for w := range d.Schemi {
 		fmt.Println(w)
@@ -111,7 +177,7 @@ func stampa_schemi(d dizionario) {
 	fmt.Print("]\n")
 }
 
-func elimina(d dizionario, w string) {
+func elimina(w string) {
 	if len(w) == 0 {
 		return
 	}
@@ -122,22 +188,22 @@ func elimina(d dizionario, w string) {
 	}
 }
 
-func ricerca(d dizionario, S string) {
+func ricerca(S string) {
 	if len(S) == 0 {
 		return
 	}
 	if S == strings.ToLower(S) {
 		return
 	} else {
-		for _, k := range d.Parole {
-			if compatibile(d, S, k) {
+		for k := range d.Parole {
+			if compatibile(S, k) {
 				fmt.Println(k)
 			}
 		}
 	}
 }
 
-func compatibile(d, S string, w string) bool {
+func compatibile(S string, w string) bool {
 	M := make(map[byte]byte)
 	if len(S) != len(w) {
 		return false
@@ -164,12 +230,55 @@ func distanza(w1 string, w2 string) {
 	fmt.Printf("%d\n", distDL(w1, w2))
 }
 
-func catena(d dizionario, w1 string, w2 string) {
-	fmt.Println("non esiste")
+func catena(w1 string, w2 string) {
+	catena := generaCatena(w1, w2)
+	if len(w1) > 0 && len(w2) > 0 {
+		fmt.Println("(")
+		for _, c := range catena {
+			fmt.Println(c)
+		}
+		fmt.Println(")")
+	} else {
+		fmt.Println("non esiste")
+	}
 }
 
-func gruppo(d dizionario) {
-	fmt.Println("non esiste")
+// usa l'albero di ricerca per calcolare la catena cioè la sequenza minima
+// di parole a distanza 1 l'una dall'altra per arrivare da w1 a w2
+func generaCatena(w1 string, w2 string) []string {
+
+}
+
+func cat(w1 string, w2 string) []string {
+	if d.Parole[w1] == struct{}{} || d.Parole[w2] == struct{}{} {
+		return []string{}
+	}
+	c := make([]string, 0)
+
+	// calcola la catena minima tra w1 e w2
+	// una catena è una sequana di parle che inizia con w1 e finisce con w2 tle che la distanza
+	// di editing tra una parola e l'altra sia sempre massimo 1
+
+	return c
+}
+
+func gruppo(w string) {
+	g := group(w) //
+	if len(g) > 0 {
+		fmt.Println("[]")
+		for i := 0; i < len(g); i++ {
+			fmt.Println(g[i])
+		}
+		fmt.Println("]")
+	} else {
+		fmt.Println("non esiste")
+	}
+}
+
+func group(w string) []string {
+	g := make([]string, 0)
+
+	return g
 }
 
 func distDL(w1 string, w2 string) int {
@@ -199,8 +308,8 @@ func distDL(w1 string, w2 string) int {
 			}
 
 			dp[i][j] = min(
-				dp[i-1][j]+1,    // Deletion
-				dp[i][j-1]+1,    // Insertion
+				dp[i-1][j]+1,      // Deletion
+				dp[i][j-1]+1,      // Insertion
 				dp[i-1][j-1]+cost, // Substitution
 			)
 
@@ -214,13 +323,12 @@ func distDL(w1 string, w2 string) int {
 	return dp[n][m]
 }
 
-func min(a, b, c int) int {
-	if a < b && a < c {
-		return a
+func min(vals ...int) int {
+	min := vals[0]
+	for _, v := range vals[1:] {
+		if v < min {
+			min = v
+		}
 	}
-	if b < c {
-		return b
-	}
-	return c
-}
+	return min
 }
