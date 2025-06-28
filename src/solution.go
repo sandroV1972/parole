@@ -8,28 +8,36 @@ import (
 )
 
 var d *dizionario
-var g grafo
 
 var letters = "abcdefghijklmnopqrstuvwxyz"
 
+type dizionario struct {
+	Parole      map[string]struct{}
+	Schemi      map[string]struct{}
+	GrafoCatena map[string][]string
+}
+
 func main() {
-
-	d = newDizionario()
-	g = newGrafo()
-
-	for {
-		var comando string
-		_, err := fmt.Scan(&comando)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "Errore nella lettura del comando:", err)
-			break
-		}
-		esegui(comando)
+	var comando string
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		comando = scanner.Text()
+		esegui(&d, comando)
 	}
 }
 
-func esegui(comando string) {
-	token := split(comando)
+func newDizionario() *dizionario {
+	if d == nil {
+		d = &dizionario{}
+	}
+	d.Parole = make(map[string]struct{})
+	d.Schemi = make(map[string]struct{})
+	d.GrafoCatena = make(map[string][]string)
+	return d
+}
+
+func esegui(d **dizionario, comando string) {
+	token := strings.Fields(comando)
 
 	if len(token) == 0 {
 		os.Exit(-1)
@@ -38,7 +46,8 @@ func esegui(comando string) {
 	switch token[0] {
 	case "c":
 		if len(token) == 1 {
-			d = newDizionario()
+			*d = newDizionario()
+			return
 		} else if len(token) == 2 {
 			carica(token[1])
 		} else if len(token) > 2 {
@@ -49,7 +58,7 @@ func esegui(comando string) {
 	case "s":
 		stampa_schemi()
 	case "i":
-		d.inserisci(token[1])
+		(*d).inserisci(token[1])
 	case "e":
 		elimina(token[1])
 	case "r":
@@ -61,10 +70,6 @@ func esegui(comando string) {
 	case "t":
 		os.Exit(0)
 	}
-}
-
-func split(comando string) []string {
-	return strings.Fields(comando)
 }
 
 func carica(filename string) {
@@ -108,11 +113,11 @@ func (d dizionario) inserisci(w string) {
 
 func aggiornaGrafo(w string) {
 	if _, ok := d.GrafoCatena[w]; !ok {
-		g[w] = []string{}
+		d.GrafoCatena[w] = []string{}
 	}
 	for _, k := range d.generaDistanza1(w) {
-		g[w] = append(g[w], k)
-		g[k] = append(g[k], w)
+		d.GrafoCatena[w] = append(d.GrafoCatena[w], k)
+		d.GrafoCatena[k] = append(d.GrafoCatena[k], w)
 	}
 }
 
@@ -162,7 +167,7 @@ func (d *dizionario) generaDistanza1(w string) []string {
 }
 
 func stampa_parole() {
-	fmt.Print("[")
+	fmt.Println("[")
 	for w := range d.Parole {
 		fmt.Println(w)
 	}
@@ -195,11 +200,13 @@ func ricerca(S string) {
 	if S == strings.ToLower(S) {
 		return
 	} else {
+		fmt.Printf("%s:[\n", S)
 		for k := range d.Parole {
 			if compatibile(S, k) {
 				fmt.Println(k)
 			}
 		}
+		fmt.Println("]")
 	}
 }
 
@@ -231,7 +238,17 @@ func distanza(w1 string, w2 string) {
 }
 
 func catena(w1 string, w2 string) {
-	catena := generaCatena(w1, w2)
+	_, ok1 := d.Parole[w1]
+	_, ok2 := d.Parole[w2]
+	if !ok1 || !ok2 {
+		fmt.Println("non esiste")
+		return
+	}
+	catena := generaCatenaBFS(w1, w2)
+	if len(catena) == 0 {
+		fmt.Println("non esiste")
+		return
+	}
 	if len(w1) > 0 && len(w2) > 0 {
 		fmt.Println("(")
 		for _, c := range catena {
@@ -245,40 +262,75 @@ func catena(w1 string, w2 string) {
 
 // usa l'albero di ricerca per calcolare la catena cioè la sequenza minima
 // di parole a distanza 1 l'una dall'altra per arrivare da w1 a w2
-func generaCatena(w1 string, w2 string) []string {
+func generaCatenaBFS(source string, dest string) []string {
 
-}
+	percorso := make([]string, 0)
+	// prepara
+	visited := map[string]bool{}
+	parent := map[string]string{}
 
-func cat(w1 string, w2 string) []string {
-	if d.Parole[w1] == struct{}{} || d.Parole[w2] == struct{}{} {
-		return []string{}
+	queue := []string{source}
+	visited[source] = true
+
+	// BFS
+	for len(queue) > 0 {
+		u := queue[0]
+		queue = queue[1:]
+
+		if u == dest {
+			break
+		}
+
+		for _, v := range d.GrafoCatena[u] {
+			if !visited[v] {
+				visited[v] = true
+				parent[v] = u
+				queue = append(queue, v)
+			}
+		}
 	}
-	c := make([]string, 0)
 
-	// calcola la catena minima tra w1 e w2
-	// una catena è una sequana di parle che inizia con w1 e finisce con w2 tle che la distanza
-	// di editing tra una parola e l'altra sia sempre massimo 1
+	// ricostruci il percorso
+	if !visited[dest] {
+		return []string{} // non esiste percorso
+	}
+	curr := dest
+	for ; ; curr = parent[curr] {
+		percorso = append([]string{curr}, percorso...)
+		if curr == source {
+			break
+		}
+	}
 
-	return c
+	return percorso
 }
 
 func gruppo(w string) {
-	g := group(w) //
-	if len(g) > 0 {
-		fmt.Println("[]")
+	_, ok := d.Parole[w]
+	if !ok {
+		fmt.Println("non esiste")
+		return
+	}
+	g := ricavaGruppo(w)
+	if len(g) == 0 || len(w) == 0 {
+		fmt.Println("non esiste")
+	} else {
+		fmt.Println("[")
 		for i := 0; i < len(g); i++ {
 			fmt.Println(g[i])
 		}
 		fmt.Println("]")
-	} else {
-		fmt.Println("non esiste")
 	}
 }
 
-func group(w string) []string {
-	g := make([]string, 0)
-
-	return g
+func ricavaGruppo(w string) []string {
+	gruppo := []string{}
+	for k := range d.Parole {
+		if strings.Contains(k, w) {
+			gruppo = append(gruppo, k)
+		}
+	}
+	return gruppo
 }
 
 func distDL(w1 string, w2 string) int {
