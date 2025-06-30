@@ -136,7 +136,10 @@ func aggiornaGrafo(w string, op int) {
 			}
 		}
 	case REMOVE:
-
+		for k := range d.GrafoCatena[w] {
+			delete(d.GrafoCatena[k], w)
+		}
+		delete(d.GrafoCatena, w)
 	}
 }
 
@@ -210,6 +213,7 @@ func elimina(w string) {
 	} else {
 		delete(d.Schemi, w)
 	}
+	aggiornaGrafo(w, REMOVE)
 }
 
 func ricerca(S string) {

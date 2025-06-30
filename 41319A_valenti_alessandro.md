@@ -86,21 +86,20 @@ Vengono quindi esguiti insequenza i comandi inseriti in *stdin* fino a quando no
         - Se la parola w non esiste in GrafoCatena del dizionario la aggiunge [O(1)]
         - Se la parola esiste calcola le possibili permutazioni di distanza 1 della parola w, esegue un lookup nel dizionario e se la permutazione esiste la aggiunge alla lista di adiacenza (vicini) di w in GrafoCatena [Vedi [Grafo Catena](#grafo-catena)]
     - Rimuovi parola:
-        - 
+        - Elimina la parola dal dizionario in O(1)
+        - Elimina la chiave (parola) in GrafoCatena dopo aver rimoss la parola dalla lista di adiacenza d tutte le parola nella sua stessa lista di adiacenza. Il costo di questa operazione è O(n) con n lunghezza della lista di adiacenza della parola da eliminare [caso peggiore la parola dista 1 da tutte le altre parole del dizionario] 
 
 
 ### Elimina
 - Rimuove la parola dal dizionario in O(1)
-- Aggiorna il GragoCatena in O(1), crea una lista ausiliaria con le parole nella lista di adiacenza della parola da cancellare e itera la lista ausiliaria per cancellare la parola nelle rispettive liste di adiacenza in O(n) con n lunghezza della lista di adiacenza della parola da eliminare. Lo spazio anche esso O(n)
+- Aggiorna il GrafoCatena, itera la lista di adiacenza della parola da cancellare per eliminare la parola nelle rispettive liste di adiacenza in O(n) con n lunghezza della lista di adiacenza della parola da eliminare.
 
 
-### `func Carica(d *Dizionario, path string)`
-- Legge da file e inserisce ogni token.
-- **Tempo:** O(k), con k numero di parole/schemi nel file
+### Carica
+- Legge da file parole e schemi. Richiama inserisci. Ogni operazione viene eseguita in tempo costante O(n) con n numero di parole/schemi nel file
 
----
 
-### `func Compatibile(schema, parola string) bool`
+### Compatibile
 - Verifica se esiste un’assegnazione coerente di lettere per rendere schema == parola.
 - **Tempo:** O(L), con L lunghezza dello schema/parola
 
