@@ -139,6 +139,10 @@ Oltre ai testi forniti con il problema sono stati implementati altri test qui br
    aaa--aac
 - ricerca di un gruppo a partire da una parola non nel dizionario (output 'non esiste')
 
+### Tests su input/elaborazioni molot grandi
+- Caricare 100000 parole da file *mega_dizionario*
+- Stampare catene da >1000 nodi [c a lajempkxlmnrohvrrdxpggmpsbtjqkkrnchxbzvvzfoatqbgap]
+- Stampare gruppi da >1000 nodi [g a]
 
 ## Considerazioni finali
 
