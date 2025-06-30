@@ -220,6 +220,108 @@ bba
 	}
 }
 
+func TestParolaSchemaInesistente(t *testing.T) {
+	casiTest := []CasoTest{
+		{"parola e schema inesistenti",
+			`c
+i a
+i A
+e b
+e B`,
+			""},
+	}
+	for _, ct := range casiTest {
+		t.Run(ct.nome, func(t *testing.T) {
+			output := eseguiTest(ct.input)
+			if output != ct.atteso {
+				t.Errorf("\nInput:\n%s \n\nESECUZIONE:\n<<<<<\n%s\n>>>>\n\nATTESO:\n<<<<<\n%s\n>>>>", ct.input, output, ct.atteso)
+			}
+		})
+	}
+}
+func TestDataFormatErrato(t *testing.T) {
+	casiTest := []CasoTest{
+		{"parola e schema con caratteri errati",
+			`c
+i a$
+i A&`,
+			""},
+	}
+	for _, ct := range casiTest {
+		t.Run(ct.nome, func(t *testing.T) {
+			output := eseguiTest(ct.input)
+			if output != ct.atteso {
+				t.Errorf("\nInput:\n%s \n\nESECUZIONE:\n<<<<<\n%s\n>>>>\n\nATTESO:\n<<<<<\n%s\n>>>>", ct.input, output, ct.atteso)
+			}
+		})
+	}
+}
+
+func TestInsertDuplicatiParole(t *testing.T) {
+	casiTest := []CasoTest{
+		{"parola duplicati",
+			`c
+i a
+i a
+p`,
+			`[
+a
+]
+`},
+	}
+	for _, ct := range casiTest {
+		t.Run(ct.nome, func(t *testing.T) {
+			output := eseguiTest(ct.input)
+			if output != ct.atteso {
+				t.Errorf("\nInput:\n%s \n\nESECUZIONE:\n<<<<<\n%s\n>>>>\n\nATTESO:\n<<<<<\n%s\n>>>>", ct.input, output, ct.atteso)
+			}
+		})
+	}
+}
+
+func TestInsertDuplicatiSchemi(t *testing.T) {
+	casiTest := []CasoTest{
+		{"schema duplicati",
+			`c
+i A
+i A
+s`,
+			`[
+A
+]
+`},
+	}
+	for _, ct := range casiTest {
+		t.Run(ct.nome, func(t *testing.T) {
+			output := eseguiTest(ct.input)
+			if output != ct.atteso {
+				t.Errorf("\nInput:\n%s \n\nESECUZIONE:\n<<<<<\n%s\n>>>>\n\nATTESO:\n<<<<<\n%s\n>>>>", ct.input, output, ct.atteso)
+			}
+		})
+	}
+}
+
+func TestCatenaVuota(t *testing.T) {
+	casiTest := []CasoTest{
+		{"catena tra due parole del dizionario non collegate",
+			`c
+i a
+i aa
+i cc
+c a cc`,
+			`non esiste
+`},
+	}
+	for _, ct := range casiTest {
+		t.Run(ct.nome, func(t *testing.T) {
+			output := eseguiTest(ct.input)
+			if output != ct.atteso {
+				t.Errorf("\nInput:\n%s \n\nESECUZIONE:\n<<<<<\n%s\n>>>>\n\nATTESO:\n<<<<<\n%s\n>>>>", ct.input, output, ct.atteso)
+			}
+		})
+	}
+}
+
 /* func TestFormatoFamiglia(t *testing.T) {
 	casiTest := []CasoTest{
 		{"famiglia esistente",

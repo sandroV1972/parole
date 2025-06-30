@@ -57,6 +57,7 @@ Quando conviene quale?
 In sintesi:
 	•	Scansione → complessità O(N·L²) per parola
 	•	Generazione → complessità O(L·|Σ|) per parola
+
 ----
 
 Per rispondere alla richiesta del problema di un entità dizionario unica (singleton), che può essere creata se non esistente, o resettata nei contenuti se già esistente, si crea una istanza in *main()* ma viene utilizzato sempre e solo un puntatore a quella istanza in tutti i metodi.
@@ -78,6 +79,8 @@ Vengono quindi esguiti insequenza i comandi inseriti in *stdin* fino a quando no
 - La crezione della struttura richiede O(1). 
 - Popolare da file (*c nomefile.txt'*) richiede O(n) con n=numero di parole/schemi caricate nel dizionario.
 
+###
+
 ### Inserisci
 - Inserisce una parola o schema nel dizionario in base alla presenza di lettere maiuscole nella stringa caricata. Questa operazione richiede di convertire in minuscole la parola che richiede O(n) con n lunghezza della parola e poi confrontarla con l'originale che richiede O(n) quindi con una complessità di O(2n) semplificato a O(n) 
 - L'inserimento richiede O(1)
@@ -91,61 +94,47 @@ Vengono quindi esguiti insequenza i comandi inseriti in *stdin* fino a quando no
         - Elimina la parola dal dizionario in O(1)
         - Elimina la chiave (parola) in GrafoCatena dopo aver rimoss la parola dalla lista di adiacenza d tutte le parola nella sua stessa lista di adiacenza. Il costo di questa operazione è O(n) con n lunghezza della lista di adiacenza della parola da eliminare [caso peggiore la parola dista 1 da tutte le altre parole del dizionario] 
 
-
 ### Elimina
-- Rimuove la parola dal dizionario in O(1)
+- Rimuove la parola dal dizionario in O(1) grazie alla struttura dati scelta.
 - Aggiorna il GrafoCatena, itera la lista di adiacenza della parola da cancellare per eliminare la parola nelle rispettive liste di adiacenza in O(n) con n lunghezza della lista di adiacenza della parola da eliminare.
 
 
 ### Carica
-- Legge da file parole e schemi. Richiama inserisci. Ogni operazione viene eseguita in tempo costante O(n) con n numero di parole/schemi nel file
+- Legge da file parole e schemi. Richiama *inserisci* per ogni token del file. Ogni operazione viene eseguita in tempo costante O(1) per un tempo totale O(n) con n numero di parole/schemi nel file
 
 
 ### Compatibile
-- Verifica se esiste un’assegnazione coerente di lettere per rendere schema == parola.
-- **Tempo:** O(L), con L lunghezza dello schema/parola
+- Confronta lettera per lettera parola e schema per verificare se esiste un’assegnazione coerente di lettere. Il confronto viene fatto lettera per lettera per posizione.
+- Richiede un tempo	 O(L), con L lunghezza dello schema/parola
 
----
+### Distanza 
+- Stampa la distanza tra due parole calcolata con **distDL(w1, w2)** che usa l'algoritmo di Damerau-Levensthein per calcolare la distanza tra due parole (usa inserimento, sostituzione, eliminazione e scambio calcolata con la matrice n x m con O(n × m), dove n = len(w1), m = len(w2)).
 
-### `func DamerauLevenshtein(a, b string) int`
-- Calcola la distanza minima considerando inserzione, cancellazione, sostituzione, e scambio.
-- **Algoritmo:** programmazione dinamica con matrice
-- **Tempo:** O(n × m), dove n = len(a), m = len(b)
+### Catena
+- Utiizziamo un algoritmo BFS in quanto ho un albero non orientato non pesato (ogni collegamento ha peso 1) su parole collegate da distanza di editing 1 a partire dal GrafoCatena per calcolare la catena di parole tra le due parole **(w1, w2)**. BFS visita sempre i nodi piu vicini per cui appena si trova *w2* possiamo assumenre quello sia il percorso più breve.
+- Strutture ausiliarie sono mappa *visited* e *parents* per tenere traccia dei nodi visitati e dei nodi padre più una coda, quindi spazio O(3V) o O(V) con V nodi del grafo, per le tre strutture richieste. Viene creata una coda e si ricostruisce il percorso una volta trovata *w2* in tempo O(V+E) con V nodi e E archi del grafo.
 
----
-
-### `func Catena(d *Dizionario, x, y string) []string`
-- BFS su parole collegate da distanza di editing 1.
-- **Tempo:** O(N × L²) nel caso peggiore (con N parole e confronto Damerau-Levenshtein tra parole di lunghezza L)
-
----
-
-### `func Gruppo(d *Dizionario, x string) []string`
-- BFS per trovare la componente connessa in cui tutte le parole sono raggiungibili tramite distanza 1.
-- **Tempo:** O(N × L²)
-
----
-
-### `func CostruisciGrafoSchemi(schemi, parole)`
-- Crea un grafo degli schemi, collegando due schemi se esiste almeno una parola compatibile con entrambi.
-- **Tempo:** O(S² × P × L), dove S = numero schemi, P = numero parole, L = lunghezza media
-
----
-
-### `func Famiglia(S string, schemi, parole)`
-- BFS sul grafo degli schemi per trovare la famiglia che contiene `S`.
-- **Tempo:** O(S + E), dove E = numero di archi compatibilità (dipende da compatibilità tra schemi)
-
----
+### Gruppo
+- Secondo la definzione fornita nella traccia devo trovare tutte le connessioni a distanza 1 a partire da una singola parola **w**. Vuol dire visitare iterativamente tutte le liste di adiacenza delle parole nella lista di adiacenza di *w*. Con una struttura ausiliaria coda di effettua una visita in ampiezza del grafo a partire dalla parole con un tempo O(V+E) dove V sono i nodi e E sono gli archi del grafo. 
+- Le strutture ausiliarie utilizzate sono la coda, e le mappe per i nodi visitati e il gruppo:
+```go
+	g := make([]string, 0)
+	visit := make(map[string]bool)
+	queue := []string{w}
+```
+Anche qui lo spazio può essere calcolato in O(V)
 
 ## Test del programma 
+Oltre ai testi forniti con il problema sono stati implementati altri test qui brevemente descritti. Utilizzando i file forniti con il progetto basta eseguire go test -v per una rassegna di tutti i test
+- elimina una parola e uno schema inesistente (nessun output)
+- inserire una parola o uno schema con caratteri non "a...z" o "A...Z" (nessun output)
+- inserire una parola o uno schema duplicati (output senza duplicati, il secondo inserimento non avviene)
+- ricerca di una catena vuota tra due parole che non hanno una serie di parole a distanza 1 tra di loro (output deve indicare 'non esiste')
+- ricerca di un gruppo di una parola non in dizionario (output deve indicare 'non esiste')
 
 
 
----
 
 ## Considerazioni finali
 
-- La funzione `crea()` **sovrascrive** il dizionario esistente.
-- L'algoritmo Damerau-Levenshtein gestisce tutti i tipi di operazioni.
-- Le strutture e funzioni sono progettate per essere scalabili e compatibili con Go.
+
