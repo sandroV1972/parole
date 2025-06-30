@@ -1,0 +1,3 @@
+c dict_patho_dense.txt
+g abc
+t

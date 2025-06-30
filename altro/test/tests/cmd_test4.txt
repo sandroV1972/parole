@@ -1,0 +1,4 @@
+c dict_test4.txt
+r aCCa
+r ABca
+t

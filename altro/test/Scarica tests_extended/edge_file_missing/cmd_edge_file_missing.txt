@@ -1,0 +1,4 @@
+c missing_file.txt
+p
+s
+t

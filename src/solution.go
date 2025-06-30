@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -11,32 +12,37 @@ var d *dizionario
 
 var letters = "abcdefghijklmnopqrstuvwxyz"
 
+var ADD = 1
+var REMOVE = 0
+
 type dizionario struct {
 	Parole      map[string]struct{}
 	Schemi      map[string]struct{}
-	GrafoCatena map[string][]string
+	GrafoCatena map[string]map[string]struct{}
 }
 
 func main() {
 	var comando string
+	dict := newDizionario()
+	d = &dict
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		comando = scanner.Text()
-		esegui(&d, comando)
+		esegui(*d, comando)
 	}
 }
 
-func newDizionario() *dizionario {
+func newDizionario() dizionario {
 	if d == nil {
 		d = &dizionario{}
 	}
 	d.Parole = make(map[string]struct{})
 	d.Schemi = make(map[string]struct{})
-	d.GrafoCatena = make(map[string][]string)
-	return d
+	d.GrafoCatena = make(map[string]map[string]struct{})
+	return *d
 }
 
-func esegui(d **dizionario, comando string) {
+func esegui(d dizionario, comando string) {
 	token := strings.Fields(comando)
 
 	if len(token) == 0 {
@@ -46,7 +52,7 @@ func esegui(d **dizionario, comando string) {
 	switch token[0] {
 	case "c":
 		if len(token) == 1 {
-			*d = newDizionario()
+			d = newDizionario()
 			return
 		} else if len(token) == 2 {
 			carica(token[1])
@@ -58,7 +64,12 @@ func esegui(d **dizionario, comando string) {
 	case "s":
 		stampa_schemi()
 	case "i":
-		(*d).inserisci(token[1])
+		// verifica che vi sia un token[1] se non c'è ignora il comando
+		if len(token) == 1 {
+			return
+		} else {
+			d.inserisci(token[1])
+		}
 	case "e":
 		elimina(token[1])
 	case "r":
@@ -94,9 +105,6 @@ func carica(filename string) {
 }
 
 func (d dizionario) inserisci(w string) {
-	if len(w) == 0 {
-		return
-	}
 	if w == strings.ToLower(w) {
 		if _, ok := d.Parole[w]; ok {
 			return // La parola è già presente nel dizionario
@@ -104,20 +112,31 @@ func (d dizionario) inserisci(w string) {
 		d.Parole[w] = struct{}{}
 		// inserisci la parola nel albero di ricerca e tutte le parole del dizioonario con
 		// distanza 1
-		aggiornaGrafo(w)
+		aggiornaGrafo(w, ADD)
 
 	} else {
 		d.Schemi[w] = struct{}{}
 	}
 }
 
-func aggiornaGrafo(w string) {
-	if _, ok := d.GrafoCatena[w]; !ok {
-		d.GrafoCatena[w] = []string{}
-	}
-	for _, k := range d.generaDistanza1(w) {
-		d.GrafoCatena[w] = append(d.GrafoCatena[w], k)
-		d.GrafoCatena[k] = append(d.GrafoCatena[k], w)
+func aggiornaGrafo(w string, op int) {
+	switch op {
+	case ADD:
+		if _, ok := d.GrafoCatena[w]; !ok {
+			d.GrafoCatena[w] = make(map[string]struct{})
+		}
+		for _, k := range d.generaDistanza1(w) {
+			d.GrafoCatena[w][k] = struct{}{}
+			if _, ok := d.GrafoCatena[k]; !ok {
+				d.GrafoCatena[k] = make(map[string]struct{})
+			}
+			d.GrafoCatena[k][w] = struct{}{}
+			if _, ok := d.GrafoCatena[k]; !ok {
+				d.GrafoCatena[w] = make(map[string]struct{})
+			}
+		}
+	case REMOVE:
+
 	}
 }
 
@@ -281,7 +300,7 @@ func generaCatenaBFS(source string, dest string) []string {
 			break
 		}
 
-		for _, v := range d.GrafoCatena[u] {
+		for v := range d.GrafoCatena[u] {
 			if !visited[v] {
 				visited[v] = true
 				parent[v] = u
@@ -305,32 +324,44 @@ func generaCatenaBFS(source string, dest string) []string {
 	return percorso
 }
 
+func (d *dizionario) generaGruppo(w string) []string {
+	g := make([]string, 0)
+	visit := make(map[string]bool)
+	queue := []string{w}
+	visit[w] = true
+	for len(queue) > 0 {
+		u := queue[0]
+		queue = queue[1:]
+		g = append(g, u)
+		for v := range d.GrafoCatena[u] {
+			if !visit[v] {
+				visit[v] = true
+				queue = append(queue, v)
+			}
+		}
+	}
+	sort.Strings(g)
+	return g
+}
+
 func gruppo(w string) {
 	_, ok := d.Parole[w]
 	if !ok {
 		fmt.Println("non esiste")
 		return
 	}
-	g := ricavaGruppo(w)
-	if len(g) == 0 || len(w) == 0 {
+	g := d.generaGruppo(w)
+	if len(g) == 0 {
 		fmt.Println("non esiste")
+		return
 	} else {
 		fmt.Println("[")
-		for i := 0; i < len(g); i++ {
-			fmt.Println(g[i])
+		for _, c := range g {
+			fmt.Println(c)
 		}
 		fmt.Println("]")
 	}
-}
-
-func ricavaGruppo(w string) []string {
-	gruppo := []string{}
-	for k := range d.Parole {
-		if strings.Contains(k, w) {
-			gruppo = append(gruppo, k)
-		}
-	}
-	return gruppo
+	//fmt.Println(d.Parole[w].Gruppo)
 }
 
 func distDL(w1 string, w2 string) int {

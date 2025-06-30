@@ -1,0 +1,4 @@
+c dict_test3.txt
+g aa
+g cca
+t

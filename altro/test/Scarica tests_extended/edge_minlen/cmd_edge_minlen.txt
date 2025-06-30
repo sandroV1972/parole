@@ -1,0 +1,4 @@
+c dict_edge_minlen.txt
+d ab ba
+r AB
+t

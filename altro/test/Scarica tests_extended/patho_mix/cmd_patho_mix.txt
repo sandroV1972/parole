@@ -1,0 +1,7 @@
+c dict_patho_mix.txt
+i dd
+e aa
+i ee
+g bb
+p
+t

@@ -1,0 +1,13 @@
+c dict_patho_chain.txt
+i w0
+i w1
+i w2
+i w3
+i w4
+i w5
+i w6
+i w7
+i w8
+i w9
+g w0
+t

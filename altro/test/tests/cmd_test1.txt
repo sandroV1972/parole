@@ -1,0 +1,7 @@
+p
+s
+i apple
+i ApPLe
+p
+s
+t

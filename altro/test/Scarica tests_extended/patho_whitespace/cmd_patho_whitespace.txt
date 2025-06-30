@@ -1,0 +1,4 @@
+c dict_patho_whitespace.txt
+p
+s
+t
