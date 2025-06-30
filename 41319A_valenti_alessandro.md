@@ -23,7 +23,7 @@ type dizionario struct {
 ```
 
 Il dizionario contiene una mappa per le **Parole** una per gli **Schemi** e una mappa **GrafoCatena** che rappresenta la lista di connessioni a distanza 1 di ogni parola. Un percorso tra due parole nel **GrafoCatena** rappresenta una **catena**. 
-La scelta di modellare Parole e Schemi con mappe perchè in Go, con *e elemento* della mappa (chiave), *trova(e)* in O(1) ammortizzato, *elimina(e)* in O(1) ammortizzato, la mappa mi garantisce che non vi siano duplicati.
+La scelta di modellare Parole e Schemi con mappe perchè in Go, con *e elemento* della mappa (chiave), *trova(e)* in O(1) ammortizzato, *elimina(e)* in O(1) ammortizzato, la mappa mi garantisce che non vi siano duplicati. Il lato negativo di quuesta scelta è che la mappa non garantisce l'ordine quando si recuperano i dati per cui la **stampa** di *parole* e *schemi* richiede di copiare in una slice **tempo e spazio O(n)** e poi ordinarle **tempo O(n log n)**. 
 In tutte le operazioni chiave (inserisci, elimina, ricerca, compatibilità) serve soprattutto test di appartenenza e aggiornamenti rapidi.
 Il GrafoCatena viene aggiornato a ogni inserimento di nuove parole nel dizionario. Ricavo quindi facilmente una catena(x, y) e un gruppo(x).
 
@@ -98,10 +98,8 @@ Vengono quindi esguiti insequenza i comandi inseriti in *stdin* fino a quando no
 - Rimuove la parola dal dizionario in O(1) grazie alla struttura dati scelta.
 - Aggiorna il GrafoCatena, itera la lista di adiacenza della parola da cancellare per eliminare la parola nelle rispettive liste di adiacenza in O(n) con n lunghezza della lista di adiacenza della parola da eliminare.
 
-
 ### Carica
 - Legge da file parole e schemi. Richiama *inserisci* per ogni token del file. Ogni operazione viene eseguita in tempo costante O(1) per un tempo totale O(n) con n numero di parole/schemi nel file
-
 
 ### Compatibile
 - Confronta lettera per lettera parola e schema per verificare se esiste un’assegnazione coerente di lettere. Il confronto viene fatto lettera per lettera per posizione.
