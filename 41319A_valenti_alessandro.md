@@ -146,7 +146,7 @@ Oltre ai testi forniti con il problema sono stati implementati altri test qui br
 
 Per poter tenere separati i test formato dai test efficienza ho creato un file diverso per cu:
 - con ``go test -v`` si eseguono i test formato
-- con ``go test ...`` si eseguno i test efficienza
+- con ``go test -tags=perfs`` si eseguno i test efficienza
 
 ## Considerazioni finali
 
