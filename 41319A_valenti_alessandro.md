@@ -139,12 +139,17 @@ Oltre ai testi forniti con il problema sono stati implementati altri test qui br
 
 ### Tests su input/elaborazioni molot grandi
 - Caricare 100000 parole da file *mega_dizionario*
-- Stampare catene da >1000 nodi [c a lajempkxlmnrohvrrdxpggmpsbtjqkkrnchxbzvvzfoatqbgap]
+	- c mega_dizionario
+   	- p
+   	- t
+- Stampare catene da >1000 nodi
+	- c mega_dizionario
+   	- c a lajempkxlmnrohvrrdxpggmpsbtjqkkrnchxbzvvzfoatqbgap
+   	- t
 - Stampare gruppi da >1000 nodi [g a]
-
-Per poter tenere separati i test formato dai test efficienza ho creato un file diverso per cu:
-- con ``go test -v`` si eseguono i test formato
-- con ``go test -tags=perfs`` si eseguno i test efficienza
+	- c mega_dizionario
+ 	- g a
+  	- t
 
 ## Considerazioni finali
 
