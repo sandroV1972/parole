@@ -35,28 +35,28 @@ Vale la pena soffermarsi sulla scelta implementativa. L'aggiornamento del Grafo 
 
 1) Scansione del dizionario
 Per ogni parola u di lunghezza L:
-	•	Confronti u con tutte le N parole del dizionario usando Damerau–Levenshtein in O(L²).
-	•	Costo per inserimento (o per ogni passo di BFS): O(N × L²).
+	+	Confronti u con tutte le N parole del dizionario usando Damerau–Levenshtein in O(L²).
+	+	Costo per inserimento (o per ogni passo di BFS): O(N × L²).
 Qui la complessità cresce linearmente con la dimensione del dizionario N e quadraticamente con la lunghezza L della parola.
 
 2) Generazione on-the-fly dei vicini (genero tutti i possibili vicini senza cercarli nel dizionario)
 Per la stessa parola u di lunghezza L si generano circa:
-	•	L cancellazioni
-	•	L trasposizioni
-	•	L×26 sostituzioni
-	•	L×26 inserzioni in O(L × |Σ|) operazioni (qui |Σ| = 26).
-	•	Per ciascuno dei ~2L + 52L candidati fai un lookup O(1) in map[string]struct{}.
-	•	Costo per inserimento (o per passo di BFS): O(L × |Σ|).
+	+	L cancellazioni
+	+	L trasposizioni
+	+	L×26 sostituzioni
+	+	L×26 inserzioni in O(L × |Σ|) operazioni (qui |Σ| = 26).
+	+	Per ciascuno dei ~2L + 52L candidati fai un lookup O(1) in map[string]struct{}.
+	+	Costo per inserimento (o per passo di BFS): O(L × |Σ|).
 
 La complessità non dipende da N (la dimensione del dizionario) se non nel più che trascurabile fattore dei lookup O(1), ma cresce solo con L e con la dimensione dell’alfabeto.
 
 Quando conviene quale?
-	•	Se N molto grande (milioni di parole) e L moderato (poche decine), l’approccio “genera vicini” è decisamente più veloce, perché O(L·|Σ|) ≪ O(N·L²).
-	•	Se L molto grande (centinaia/molti caratteri) ma N piccolo (pochi elementi), si potrebbe favorire la scansione del dizionario, ma in pratica con L ≤ 50 N può essere grande, quindi “genera vicini” è quasi sempre preferibile.
+	+	Se N molto grande (milioni di parole) e L moderato (poche decine), l’approccio “genera vicini” è decisamente più veloce, perché O(L·|Σ|) ≪ O(N·L²).
+	+	Se L molto grande (centinaia/molti caratteri) ma N piccolo (pochi elementi), si potrebbe favorire la scansione del dizionario, ma in pratica con L ≤ 50 N può essere grande, quindi “genera vicini” è quasi sempre preferibile.
 
 In sintesi:
-	•	Scansione → complessità O(N·L²) per parola
-	•	Generazione → complessità O(L·|Σ|) per parola
+	+	Scansione → complessità O(N·L²) per parola
+	+	Generazione → complessità O(L·|Σ|) per parola
 
 ----
 
