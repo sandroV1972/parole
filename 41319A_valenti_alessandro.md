@@ -1,12 +1,12 @@
 
-# Laboratorii di Algoritmi e Strutture Dati 
+# Laboratorio di Algoritmi e Strutture Dati 
 # Relazione del Progetto: Gestione di un dizionario di parole e schemi (Go)
 
-
+----
 
 ## Introduzione
 
-Il progetto "parole e schemi" gestisce un dizionario composto da **parole** (solo lettere minuscole) e **schemi** (che contengono almeno una lettera maiuscola). Il progetto permette la creazione di un **dizionario** che potrà essere popolato di parole e schemi attraverso operzioni bulk con file o dirette. Diverse operazioni sono permesse sugli elementi del dizionario. Il programma 41319A_valenti_alessandro.go contiene strutture, operazioni (e algoritmi) tutti in un unico file. viene poi sfruttato il listato fornito dalla Prof. V. Lonati per eseguire test supplementari descrtitti in questo documento.
+Il progetto "parole e schemi" gestisce un dizionario composto da **parole** (solo lettere minuscole) e **schemi** (che contengono almeno una lettera maiuscola). Il progetto permette la creazione di un **dizionario** che potrà essere popolato di parole e schemi attraverso operzioni bulk con file o dirette. Diverse operazioni sono permesse sugli elementi del dizionario. Il programma 41319A_valenti_alessandro.go contiene strutture, operazioni (e algoritmi) tutti in un unico file. vengono poi sfruttato formato_test.go, lib_test.go e utils_test.go forniti dalla Prof. V. Lonati per eseguire test supplementari descrtitti in questo documento.
 
 
 ## Descrizione di 41319A_valenti_alessandro.go
