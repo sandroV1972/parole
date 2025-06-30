@@ -322,6 +322,66 @@ c a cc`,
 	}
 }
 
+func TestCatenaBreve(t *testing.T) {
+	casiTest := []CasoTest{
+		{"trova la strada piu breve tra due parole del dizionario",
+			`c
+i a
+i aa
+i aaa
+i ac
+i acc
+i aac
+c a aaa`,
+			`(
+a
+aa
+aaa
+)
+`},
+	}
+	for _, ct := range casiTest {
+		t.Run(ct.nome, func(t *testing.T) {
+			output := eseguiTest(ct.input)
+			if output != ct.atteso {
+				t.Errorf("\nInput:\n%s \n\nESECUZIONE:\n<<<<<\n%s\n>>>>\n\nATTESO:\n<<<<<\n%s\n>>>>", ct.input, output, ct.atteso)
+			}
+		})
+	}
+}
+
+func TestGruppoParolaInesistente(t *testing.T) {
+	casiTest := []CasoTest{
+		{"gruppo parola inesistente",
+			`c
+i a
+i aa
+i aaa
+g b`,
+			`non esiste
+`},
+	}
+	for _, ct := range casiTest {
+		t.Run(ct.nome, func(t *testing.T) {
+			output := eseguiTest(ct.input)
+			if output != ct.atteso {
+				t.Errorf("\nInput:\n%s \n\nESECUZIONE:\n<<<<<\n%s\n>>>>\n\nATTESO:\n<<<<<\n%s\n>>>>", ct.input, output, ct.atteso)
+			}
+		})
+	}
+}
+
+func TestGruppoUnione(t *testing.T) {
+	LanciaGenericaConFileInOutAtteso(
+		t,
+		prog,
+		"gruppo-in",
+		"gruppo-out",
+		verbose,
+	)
+
+}
+
 /* func TestFormatoFamiglia(t *testing.T) {
 	casiTest := []CasoTest{
 		{"famiglia esistente",

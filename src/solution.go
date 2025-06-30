@@ -12,8 +12,10 @@ var d *dizionario
 
 var letters = "abcdefghijklmnopqrstuvwxyz"
 
-var ADD = 1
-var REMOVE = 0
+const (
+	ADD    = 1
+	REMOVE = 0
+)
 
 type dizionario struct {
 	Parole      map[string]struct{}
@@ -125,16 +127,32 @@ func aggiornaGrafo(w string, op int) {
 		if _, ok := d.GrafoCatena[w]; !ok {
 			d.GrafoCatena[w] = make(map[string]struct{})
 		}
-		for _, k := range d.generaDistanza1(w) {
-			d.GrafoCatena[w][k] = struct{}{}
-			if _, ok := d.GrafoCatena[k]; !ok {
-				d.GrafoCatena[k] = make(map[string]struct{})
-			}
-			d.GrafoCatena[k][w] = struct{}{}
-			if _, ok := d.GrafoCatena[k]; !ok {
-				d.GrafoCatena[w] = make(map[string]struct{})
+		combinazioniDL := d.generaCombinazioniDL(w)
+		//itera tutte le combinazioni e se è presente nel dizionario
+		//aggiungi l'arco al grafo sia da w->k che da k->w
+		for _, k := range combinazioniDL {
+			if _, ok := d.Parole[k]; !ok {
+				continue
+			} else {
+				d.GrafoCatena[w][k] = struct{}{}
+				if _, ok := d.GrafoCatena[k]; !ok {
+					d.GrafoCatena[k] = make(map[string]struct{})
+				}
+				d.GrafoCatena[w][k] = struct{}{}
+				d.GrafoCatena[k][w] = struct{}{}
 			}
 		}
+		/*
+			for _, k := range d.generaDistanza1(w) {
+				d.GrafoCatena[w][k] = struct{}{}
+				if _, ok := d.GrafoCatena[k]; !ok {
+					d.GrafoCatena[k] = make(map[string]struct{})
+				}
+				d.GrafoCatena[k][w] = struct{}{}
+				if _, ok := d.GrafoCatena[k]; !ok {
+					d.GrafoCatena[w] = make(map[string]struct{})
+				}
+			} */
 	case REMOVE:
 		for k := range d.GrafoCatena[w] {
 			delete(d.GrafoCatena[k], w)
@@ -143,6 +161,7 @@ func aggiornaGrafo(w string, op int) {
 	}
 }
 
+/*
 // generaDistanza1 restituisce tutte le parole già presenti in d.Parole
 // che sono a distanza esattamente 1 da w
 func (d *dizionario) generaDistanza1(w string) []string {
@@ -184,6 +203,44 @@ func (d *dizionario) generaDistanza1(w string) []string {
 		if _, ok := d.Parole[cand]; ok {
 			res = append(res, cand)
 		}
+	}
+	return res
+}
+*/
+// generaDistanza1 restituisce tutte le parole
+//
+//	che sono a distanza esattamente 1 da w
+func (d *dizionario) generaCombinazioniDL(w string) []string {
+	var res []string
+
+	// substitution
+	for i := 0; i < len(w); i++ {
+		orig := w[i]
+		for j := range letters {
+			ch := letters[j]
+			if byte(ch) == orig {
+				continue
+			}
+			cand := w[:i] + string(ch) + w[i+1:]
+			res = append(res, cand)
+		}
+	}
+	// insertion
+	for i := 0; i <= len(w); i++ {
+		for j := range letters {
+			cand := w[:i] + string(letters[j]) + w[i:]
+			res = append(res, cand)
+		}
+	}
+	// deletion
+	for i := 0; i < len(w); i++ {
+		cand := w[:i] + w[i+1:]
+		res = append(res, cand)
+	}
+	// transposition
+	for i := 0; i < len(w)-1; i++ {
+		cand := w[:i] + string(w[i+1]) + string(w[i]) + w[i+2:]
+		res = append(res, cand)
 	}
 	return res
 }

@@ -1,5 +1,5 @@
 
-# Laboratorii di Algoritmi e Strutture Dati
+# Laboratorii di Algoritmi e Strutture Dati 
 # Relazione del Progetto: Gestione di un dizionario di parole e schemi (Go)
 
 
@@ -131,10 +131,14 @@ Oltre ai testi forniti con il problema sono stati implementati altri test qui br
 - inserire una parola o uno schema duplicati (output senza duplicati, il secondo inserimento non avviene)
 - ricerca di una catena vuota tra due parole che non hanno una serie di parole a distanza 1 tra di loro (output deve indicare 'non esiste')
 - ricerca di un gruppo di una parola non in dizionario (output deve indicare 'non esiste')
-
-
+- verifica che venga trovata la catena più breve nel grafo
+	a---ac
+	| /	| 
+	aa  acc
+	| \	|
+   aaa--aac
+- ricerca di un gruppo a partire da una parola non nel dizionario (output 'non esiste')
 
 
 ## Considerazioni finali
-
 
