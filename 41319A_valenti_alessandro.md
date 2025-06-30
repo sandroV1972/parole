@@ -152,4 +152,14 @@ Oltre ai testi forniti con il problema sono stati implementati altri test qui br
   	- t
 
 ## Considerazioni finali
+### Limiti e possibili miglioramenti  
+1. **Caching lazy** di `vicini(u)` per evitare rigenerazioni ripetute durante BFS.  
+2. **Strutture avanzate** (BK-Tree, suffisso-automaton) per ricerche di vicini o sottostringhe in casi speciali.  
+
+### Conclusione  
+La soluzione in Go, basata su:
+- **map[string]struct{}** per insiemi (inserimento, cancellazione, lookup in O(1)),  
+- **lista di adiacenza aggiornata on-insert** per BFS rapide,  
+- uso di **Damerau–Levenshtein** e dell’algoritmo **Two-Way** (via `strings.Index`) per la correttezza dei calcoli,
+offre un ottimo compromesso** tra semplicità, performance e manutenibilità, soddisfacendo i requisiti del laboratorio anche in scenari limite e patologici.  
 
