@@ -29,6 +29,7 @@ Il GrafoCatena viene aggiornato a ogni inserimento di nuove parole nel dizionari
 
 ### Grafo Catena 
 Il grafo modellato è un grafo non orientato (non pesato) con componenti connesse multiple (alcune parti possono non essere mutualmente ragiungibili). La struttura dati scelta è una lista di adiacenza implementata con una mappa di mappe. Ogni chiave è un nodo e il valore è una (mappa di [string]struct{}) che rappresenta la lista di adiacenza di vicini. La lista di adiacenza è una map[string]struct{} per permetterci ricerca e aggiornamenti in O(1). 
+
 ----
 Vale la pena soffermarsi sulla scelta implementativa. L'aggiornamento del Grafo puo essere fatto seguendo due approcci:
 
@@ -57,6 +58,7 @@ In sintesi:
 	•	Scansione → complessità O(N·L²) per parola
 	•	Generazione → complessità O(L·|Σ|) per parola
 ----
+
 Per rispondere alla richiesta del problema di un entità dizionario unica (singleton), che può essere creata se non esistente, o resettata nei contenuti se già esistente, si crea una istanza in *main()* ma viene utilizzato sempre e solo un puntatore a quella istanza in tutti i metodi.
 
 ```go
@@ -71,7 +73,7 @@ func main() {
 ```
 Vengono quindi esguiti insequenza i comandi inseriti in *stdin* fino a quando non viene inserito il comando **'t'**.
 
-#### Crea
+### Crea
 - Crea un nuovo dizionario se non esistente o ricrea le strutture del dizionario con nuove strutture vuote.
 - La crezione della struttura richiede O(1). 
 - Popolare da file (*c nomefile.txt'*) richiede O(n) con n=numero di parole/schemi caricate nel dizionario.
