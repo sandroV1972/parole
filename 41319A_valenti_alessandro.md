@@ -27,7 +27,7 @@ La scelta di modellare Parole e Schemi con mappe perchè in Go, con *e elemento*
 In tutte le operazioni chiave (inserisci, elimina, ricerca, compatibilità) serve soprattutto test di appartenenza e aggiornamenti rapidi.
 Il GrafoCatena viene aggiornato a ogni inserimento di nuove parole nel dizionario. Ricavo quindi facilmente una catena(x, y) e un gruppo(x).
 
-#### Grafo Catena 
+### Grafo Catena 
 Il grafo modellato è un grafo non orientato (non pesato) con componenti connesse multiple (alcune parti possono non essere mutualmente ragiungibili). La struttura dati scelta è una lista di adiacenza implementata con una mappa di mappe. Ogni chiave è un nodo e il valore è una (mappa di [string]struct{}) che rappresenta la lista di adiacenza di vicini. La lista di adiacenza è una map[string]struct{} per permetterci ricerca e aggiornamenti in O(1). 
 ----
 Vale la pena soffermarsi sulla scelta implementativa. L'aggiornamento del Grafo puo essere fatto seguendo due approcci:
