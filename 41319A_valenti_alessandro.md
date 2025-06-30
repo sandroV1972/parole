@@ -51,12 +51,12 @@ Per la stessa parola u di lunghezza L si generano circa:
 La complessità non dipende da N (la dimensione del dizionario) se non nel più che trascurabile fattore dei lookup O(1), ma cresce solo con L e con la dimensione dell’alfabeto.
 
 Quando conviene quale?
-	+	Se N molto grande (milioni di parole) e L moderato (poche decine), l’approccio “genera vicini” è decisamente più veloce, perché O(L·|Σ|) ≪ O(N·L²).
-	+	Se L molto grande (centinaia/molti caratteri) ma N piccolo (pochi elementi), si potrebbe favorire la scansione del dizionario, ma in pratica con L ≤ 50 N può essere grande, quindi “genera vicini” è quasi sempre preferibile.
+* 	Se N molto grande (milioni di parole) e L moderato (poche decine), l’approccio “genera vicini” è decisamente più veloce, perché O(L·|Σ|) ≪ O(N·L²).
+*	Se L molto grande (centinaia/molti caratteri) ma N piccolo (pochi elementi), si potrebbe favorire la scansione del dizionario, ma in pratica con L ≤ 50 può essere grande, quindi “genera vicini” è quasi sempre preferibile.
 
 In sintesi:
-	+	Scansione → complessità O(N·L²) per parola
-	+	Generazione → complessità O(L·|Σ|) per parola
+*	Scansione → complessità O(N·L²) per parola
+*	Generazione → complessità O(L·|Σ|) per parola
 
 ----
 
