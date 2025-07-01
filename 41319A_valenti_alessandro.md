@@ -1,12 +1,11 @@
 
-# Laboratorii di Algoritmi e Strutture Dati 
+# Laboratorio di Algoritmi e Strutture Dati 
 # Relazione del Progetto: Gestione di un dizionario di parole e schemi (Go)
 
-
-
+----
 ## Introduzione
 
-Il progetto "parole e schemi" gestisce un dizionario composto da **parole** (solo lettere minuscole) e **schemi** (che contengono almeno una lettera maiuscola). Il progetto permette la creazione di un **dizionario** che potrà essere popolato di parole e schemi attraverso operzioni bulk con file o dirette. Diverse operazioni sono permesse sugli elementi del dizionario. Il programma 41319A_valenti_alessandro.go contiene strutture, operazioni (e algoritmi) tutti in un unico file. viene poi sfruttato il listato fornito dalla Prof. V. Lonati per eseguire test supplementari descrtitti in questo documento.
+Il progetto "parole e schemi" gestisce un dizionario composto da **parole** (solo lettere minuscole) e **schemi** (che contengono almeno una lettera maiuscola). Il progetto permette la creazione di un **dizionario** che potrà essere popolato di parole e schemi attraverso operzioni bulk con file o dirette. Diverse operazioni sono permesse sugli elementi del dizionario. Il programma 41319A_valenti_alessandro.go contiene strutture, operazioni (e algoritmi) tutti in un unico file. vengono poi sfruttato *formato_test.go, lib_test.go e utils_test.go* forniti dalla Prof. V. Lonati per eseguire test supplementari descrtitti in questo documento.
 
 
 ## Descrizione di 41319A_valenti_alessandro.go
@@ -23,7 +22,7 @@ type dizionario struct {
 ```
 
 Il dizionario contiene una mappa per le **Parole** una per gli **Schemi** e una mappa **GrafoCatena** che rappresenta la lista di connessioni a distanza 1 di ogni parola. Un percorso tra due parole nel **GrafoCatena** rappresenta una **catena**. 
-La scelta di modellare Parole e Schemi con mappe perchè in Go, con *e elemento* della mappa (chiave), *trova(e)* in O(1) ammortizzato, *elimina(e)* in O(1) ammortizzato, la mappa mi garantisce che non vi siano duplicati.
+La scelta di modellare Parole e Schemi con mappe perchè in Go, con *e elemento* della mappa (chiave), *trova(e)* in O(1) ammortizzato, *elimina(e)* in O(1) ammortizzato, la mappa mi garantisce che non vi siano duplicati. Il lato negativo di quuesta scelta è che la mappa non garantisce l'ordine quando si recuperano i dati per cui la **stampa** di *parole* e *schemi* richiede di copiare in una slice **tempo e spazio O(n)** e poi ordinarle **tempo O(n log n)**. 
 In tutte le operazioni chiave (inserisci, elimina, ricerca, compatibilità) serve soprattutto test di appartenenza e aggiornamenti rapidi.
 Il GrafoCatena viene aggiornato a ogni inserimento di nuove parole nel dizionario. Ricavo quindi facilmente una catena(x, y) e un gruppo(x).
 
@@ -98,10 +97,8 @@ Vengono quindi esguiti insequenza i comandi inseriti in *stdin* fino a quando no
 - Rimuove la parola dal dizionario in O(1) grazie alla struttura dati scelta.
 - Aggiorna il GrafoCatena, itera la lista di adiacenza della parola da cancellare per eliminare la parola nelle rispettive liste di adiacenza in O(n) con n lunghezza della lista di adiacenza della parola da eliminare.
 
-
 ### Carica
 - Legge da file parole e schemi. Richiama *inserisci* per ogni token del file. Ogni operazione viene eseguita in tempo costante O(1) per un tempo totale O(n) con n numero di parole/schemi nel file
-
 
 ### Compatibile
 - Confronta lettera per lettera parola e schema per verificare se esiste un’assegnazione coerente di lettere. Il confronto viene fatto lettera per lettera per posizione.
@@ -139,6 +136,29 @@ Oltre ai testi forniti con il problema sono stati implementati altri test qui br
    aaa--aac
 - ricerca di un gruppo a partire da una parola non nel dizionario (output 'non esiste')
 
+### Tests su input/elaborazioni molot grandi
+- Caricare 100000 parole da file *mega_dizionario*
+	- c mega_dizionario
+   	- p
+   	- t
+- Stampare catene da >1000 nodi
+	- c mega_dizionario
+   	- c a lajempkxlmnrohvrrdxpggmpsbtjqkkrnchxbzvvzfoatqbgap
+   	- t
+- Stampare gruppi da >1000 nodi [g a]
+	- c mega_dizionario
+ 	- g a
+  	- t
 
 ## Considerazioni finali
+### Scelte progettuali
+Nel progetto abbiamo scelto di mantenere, nel Dizionario, una struttura di grafo (lista di adiacenza) aggiornata all’**inserimento** di ogni nuova parola. Questo sposta parte del costo computazionale dall’atto di eseguire una catena o un gruppo (query) al momento dell’inserisci. In particolare:
+	•	All’inserimento, il costo ammor­tizzato è O(L·|Σ|), con L = lunghezza della parola e |Σ| = 26 (generazione on-the-fly dei vicini).
+	•	Le operazioni di catena e gruppo diventano semplici BFS su un grafo aggiornato, con complessità O(V+E) in tempo e O(V) in spazio (V = numero di parole, E = numero di archi).
+Questa scelta è vantaggiosa in scenari con molte ricerche e pochi inserimenti, garantendo risposte rapide per catene e gruppi di decine o centinaia di migliaia di nodi. I costi in tempo e spazio rimangono sempre **lineari**.
+### Test formato e stress test 
+Utilizzando i test forniti con il progetto sono stati inseriti altri e significativi test per il formato degli inserimenti e delle richieste (casi limite e patologici). E' stato creato un test file dizionario con 100000 parole con una catena da 1000 e un gruppo da 2000 parole massimo di 50 caratteri per testare il caricamento e la gestione dell'aggiornamento del Grafo Catena che sembra non subire significativi rallentamenti. 
+### Limiti e possibili miglioramenti  
+1. Non avendo avuto indicazioni su limiti e uso del progetto si è spostato il peso sulla ricerca e meno sull'inserimento. Abbiamo ipotizzato limiti sia alle dimensioni del dizionario sia alla dimensione delle parole. 
+2. Nei limiti delle richieste progettuali si pensa che le strutture e gli algoritmi implementati siano ottimali in termini di tempo e spazio.    
 
