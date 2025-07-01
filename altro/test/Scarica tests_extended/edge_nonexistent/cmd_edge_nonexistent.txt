@@ -1,5 +1,0 @@
-c dict_edge_nonexistent.txt
-e mouse
-g mouse
-f M
-t

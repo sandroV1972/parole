@@ -1,8 +1,0 @@
-c dict_edge_single.txt
-p
-s
-d hello hello
-c hello hello
-g hello
-f A
-t

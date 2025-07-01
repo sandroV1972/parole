@@ -1,5 +1,0 @@
-c dict_edge_self_dup.txt
-i x
-i x
-d x x
-t

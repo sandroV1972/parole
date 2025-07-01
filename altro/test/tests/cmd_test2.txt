@@ -1,7 +1,0 @@
-c dict_test2.txt
-d a a
-d a b
-d a aba
-c a aba
-c a c
-t
