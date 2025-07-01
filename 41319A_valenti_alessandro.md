@@ -3,10 +3,10 @@
 # Relazione del Progetto: Gestione di un dizionario di parole e schemi (Go)
 
 ----
-
 ## Introduzione
 
 Il progetto "parole e schemi" gestisce un dizionario composto da **parole** (solo lettere minuscole) e **schemi** (che contengono almeno una lettera maiuscola). Il progetto permette la creazione di un **dizionario** che potrà essere popolato di parole e schemi attraverso operzioni bulk con file o dirette. Diverse operazioni sono permesse sugli elementi del dizionario. Il programma 41319A_valenti_alessandro.go contiene strutture, operazioni (e algoritmi) tutti in un unico file. vengono poi sfruttato *formato_test.go, lib_test.go e utils_test.go* forniti dalla Prof. V. Lonati per eseguire test supplementari descrtitti in questo documento.
+Tutti i files del progetto incluso questo in formato markdown e pdf sono scricabili anche da https://github.com/sandroV1972/parole/
 
 
 ## Descrizione di 41319A_valenti_alessandro.go
@@ -152,14 +152,13 @@ Oltre ai testi forniti con il problema sono stati implementati altri test qui br
   	- t
 
 ## Considerazioni finali
+### Scelte progettuali
+Nel progetto abbiamo scelto di mantenere, nel Dizionario, una struttura di grafo (lista di adiacenza) aggiornata all’**inserimento** di ogni nuova parola. Questo sposta parte del costo computazionale dall’atto di eseguire una catena o un gruppo (query) al momento dell’inserisci. In particolare:
+	•	All’inserimento, il costo ammor­tizzato è O(L·|Σ|), con L = lunghezza della parola e |Σ| = 26 (generazione on-the-fly dei vicini).
+	•	Le operazioni di catena e gruppo diventano semplici BFS su un grafo aggiornato, con complessità O(V+E) in tempo e O(V) in spazio (V = numero di parole, E = numero di archi).
+Questa scelta è vantaggiosa in scenari con molte ricerche e pochi inserimenti, garantendo risposte rapide per catene e gruppi di decine o centinaia di migliaia di nodi. I costi in tempo e spazio rimangono sempre **lineari**.
+### Test formato e stress test 
+Utilizzando i test forniti con il progetto sono stati inseriti altri e significativi test per il formato degli inserimenti e delle richieste (casi limite e patologici). E' stato creato un test file dizionario con 100000 parole con una catena da 1000 e un gruppo da 2000 parole massimo di 50 caratteri per testare il caricamento e la gestione dell'aggiornamento del Grafo Catena che sembra non subire significativi rallentamenti. 
 ### Limiti e possibili miglioramenti  
-1. **Caching lazy** di `vicini(u)` per evitare rigenerazioni ripetute durante BFS.  
-2. **Strutture avanzate** (BK-Tree, suffisso-automaton) per ricerche di vicini o sottostringhe in casi speciali.  
-
-### Conclusione  
-La soluzione in Go, basata su:
-- **map[string]struct{}** per insiemi (inserimento, cancellazione, lookup in O(1)),  
-- **lista di adiacenza aggiornata on-insert** per BFS rapide,  
-- uso di **Damerau–Levenshtein** e dell’algoritmo **Two-Way** (via `strings.Index`) per la correttezza dei calcoli,
-offre un ottimo compromesso** tra semplicità, performance e manutenibilità, soddisfacendo i requisiti del laboratorio anche in scenari limite e patologici.  
-
+1. Non avendo avuto indicazioni su limiti e uso del progetto si è spostato il peso sulla ricerca e meno sull'inserimento. Abbiamo ipotizzato limiti sia alle dimensioni del dizionario sia alla dimensione delle parole. 
+2. Nei limiti delle richieste progettuali si pensa che le strutture e gli algoritmi implementati siano ottimali in termini di tempo e spazio.    
