@@ -247,18 +247,34 @@ func (d *dizionario) generaCombinazioniDL(w string) []string {
 
 func stampa_parole() {
 	fmt.Println("[")
+	// prendo tutte le parole in un slice
+	keys := make([]string, 0, len(d.Parole))
 	for w := range d.Parole {
+		keys = append(keys, w)
+	}
+	// ordino alfabeticamente
+	sort.Strings(keys)
+	// stampo in ordine
+	for _, w := range keys {
 		fmt.Println(w)
 	}
-	fmt.Print("]\n")
+	fmt.Println("]")
 }
 
 func stampa_schemi() {
 	fmt.Println("[")
-	for w := range d.Schemi {
-		fmt.Println(w)
+	// raccolgo tutti gli schemi in un slice
+	keys := make([]string, 0, len(d.Schemi))
+	for s := range d.Schemi {
+		keys = append(keys, s)
 	}
-	fmt.Print("]\n")
+	// ordino alfabeticamente
+	sort.Strings(keys)
+	// stampo in ordine
+	for _, s := range keys {
+		fmt.Println(s)
+	}
+	fmt.Println("]")
 }
 
 func elimina(w string) {
