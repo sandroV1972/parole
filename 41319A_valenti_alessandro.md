@@ -6,6 +6,10 @@
 ## Introduzione
 
 Il progetto "parole e schemi" gestisce un dizionario composto da **parole** (solo lettere minuscole) e **schemi** (che contengono almeno una lettera maiuscola). Il progetto permette la creazione di un **dizionario** che potrà essere popolato di parole e schemi attraverso operzioni bulk con file o dirette. Diverse operazioni sono permesse sugli elementi del dizionario. Il programma 41319A_valenti_alessandro.go contiene strutture, operazioni (e algoritmi) tutti in un unico file. vengono poi sfruttato *formato_test.go, lib_test.go e utils_test.go* forniti dalla Prof. V. Lonati per eseguire test supplementari descrtitti in questo documento.
+<<<<<<< HEAD
+=======
+Tutti i files del progetto incluso questo in formato markdown e pdf sono scricabili anche da https://github.com/sandroV1972/parole/
+>>>>>>> 52d1d6ade1babd94e4338150973b4be2ddad2917
 
 
 ## Descrizione di 41319A_valenti_alessandro.go
@@ -161,4 +165,7 @@ Utilizzando i test forniti con il progetto sono stati inseriti altri e significa
 ### Limiti e possibili miglioramenti  
 1. Non avendo avuto indicazioni su limiti e uso del progetto si è spostato il peso sulla ricerca e meno sull'inserimento. Abbiamo ipotizzato limiti sia alle dimensioni del dizionario sia alla dimensione delle parole. 
 2. Nei limiti delle richieste progettuali si pensa che le strutture e gli algoritmi implementati siano ottimali in termini di tempo e spazio.    
+<<<<<<< HEAD
 
+=======
+>>>>>>> 52d1d6ade1babd94e4338150973b4be2ddad2917
