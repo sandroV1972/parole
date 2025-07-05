@@ -28,7 +28,7 @@ In tutte le operazioni chiave (inserisci, elimina, ricerca, compatibilità) serv
 Il GrafoCatena viene aggiornato a ogni inserimento di nuove parole nel dizionario. Ricavo quindi facilmente una catena(x, y) e un gruppo(x).
 
 ### Grafo Catena 
-Il grafo modellato è un grafo non orientato (non pesato) con componenti connesse multiple (alcune parti possono non essere mutualmente ragiungibili). La struttura dati scelta è una lista di adiacenza implementata con una mappa di mappe. Ogni chiave è un nodo e il valore è una (mappa di [string]struct{}) che rappresenta la lista di adiacenza di vicini. La lista di adiacenza è una ``map[string]struct{}`` per permetterci ricerca e aggiornamenti in O(1). 
+Il grafo modellato è un grafo non orientato (non pesato) con componenti connesse multiple (alcune parti possono non essere mutualmente ragiungibili). La struttura dati scelta è una mappa di lista di adiacenza implementate con una mappa di stringhe. Ogni chiave è un nodo e il valore è una (mappa di [string]struct{}) che rappresenta la lista di adiacenza di vicini. La lista di adiacenza è una ``map[string]struct{}`` per permetterci ricerca e aggiornamenti in O(1). La struttura scelta cu permette inoltre di creare facilmente alberi BFS con visite in amopiezza per ottenere sia le catene che i gruppi.
 
 ----
 Vale la pena soffermarsi sulla scelta implementativa sottolineando le differenze con un approccio progettuale diverso. L'aggiornamento del Grafo può essere fatto seguendo due approcci:
@@ -60,7 +60,7 @@ In sintesi:
 
 ----
 
-Per rispondere alla richiesta del problema di un entità dizionario unica (singleton), che può essere creata se non esistente, o resettata nei contenuti se già esistente, si crea una istanza in *main()* ma viene utilizzato sempre e solo un puntatore a quella istanza in tutti i metodi.
+Per rispondere alla richiesta del problema di un'entità dizionario unica (singleton), che può essere creata se non esistente, o resettata nei contenuti se già esistente, si crea una istanza in *main()* ma viene utilizzato sempre e solo un puntatore a quella istanza in tutti i metodi.
 
 ```go
 var d *dizionario
